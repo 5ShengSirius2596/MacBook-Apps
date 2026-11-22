@@ -1,0 +1,34 @@
+name: Build Rat.app (macOS Apple Silicon)
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Rat.app (arm64)
+        run: |
+          if [ -f "build_app.sh" ]; then
+            PROJECT_DIR="."
+          elif [ -f "Rat/build_app.sh" ]; then
+            PROJECT_DIR="Rat"
+          else
+            echo "未找到 build_app.sh，当前仓库文件列表："
+            ls -la
+            exit 1
+          fi
+          cd "${PROJECT_DIR}"
+          chmod +x build_app.sh
+          ./build_app.sh
+          ditto -c -k --sequesterRsrc --keepParent dist/Rat.app "${GITHUB_WORKSPACE}/Rat-macOS-arm64.app.zip"
+
+      - name: Upload Rat.app Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rat-macOS-arm64-app
+          path: Rat-macOS-arm64.app.zip
