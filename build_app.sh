@@ -15,6 +15,10 @@ rm -rf "${APP_BUNDLE}"
 mkdir -p "${APP_BUNDLE}/Contents/MacOS"
 mkdir -p "${APP_BUNDLE}/Contents/Resources"
 
+if [ -f "AppIcon.icns" ]; then
+    cp "AppIcon.icns" "${APP_BUNDLE}/Contents/Resources/AppIcon.icns"
+fi
+
 echo "[2/3] 使用 xcrun swiftc 直接编译原生 arm64 可执行文件..."
 xcrun swiftc -O \
     -target arm64-apple-macos14.0 \
@@ -39,10 +43,12 @@ cat > "${APP_BUNDLE}/Contents/Info.plist" <<EOF
     <string>${APP_NAME}</string>
     <key>CFBundleIdentifier</key>
     <string>${BUNDLE_ID}</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>CFBundleVersion</key>
-    <string>4</string>
+    <string>5</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.3.0</string>
+    <string>1.3.1</string>
     <key>CFBundleExecutable</key>
     <string>${APP_NAME}</string>
     <key>CFBundlePackageType</key>
